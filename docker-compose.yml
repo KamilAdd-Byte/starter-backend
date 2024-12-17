@@ -1,0 +1,24 @@
+version: '2'
+
+services:
+
+  db:
+    container_name: feeding-db
+    image: postgres:15.9-alpine
+    restart: always
+    environment:
+      POSTGRES_USER: kamil
+      POSTGRES_PASSWORD: kamil
+      POSTGRES_DB: feeding
+    ports:
+      - "127.0.0.1:2011:5432"
+    volumes:
+      - feeding-db:/var/lib/postgres/data
+    networks:
+      - item
+
+volumes:
+  feeding-db:
+
+networks:
+  item:

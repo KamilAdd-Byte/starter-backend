@@ -1,0 +1,25 @@
+server:
+  port: 9080
+spring:
+  application:
+    name: bread
+  datasource:
+    username: kamil
+    password: kamil
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:2011/feeding
+  jpa:
+    hibernate:
+      ddl-auto: update
+  flyway:
+    enabled: true
+    locations:
+      - classpath:db/migration
+    clean-disabled: false
+    baseline-on-migrate: true
+springdoc:
+  api-docs:
+    enabled: true
+  swagger-ui:
+    enabled: true
+    path: /swagger-ui/index.html

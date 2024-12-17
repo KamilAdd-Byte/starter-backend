@@ -1,0 +1,20 @@
+server:
+  port: 9080
+
+spring:
+  application:
+    name: bread
+  datasource:
+    username:
+    password:
+    driver-class-name:
+    url:
+  jpa:
+    hibernate:
+      ddl-auto: update
+  flyway:
+    enabled: true
+    locations:
+      - classpath:db/migration
+    clean-disabled: false
+    baseline-on-migrate: true
