@@ -1,15 +1,19 @@
 package pl.starter.listner;
 
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 import pl.starter.sourdough.event.StarterCreatedEvent;
 
 @Component
+@RequiredArgsConstructor
+@Slf4j
 public class StarterCreatedEventListener {
 
     @EventListener
     public void handleStarterCreatedEvent(StarterCreatedEvent event) {
         Long starterId = event.getStarterId();
-        System.out.println("Nowy starter został utworzony, ID: " + starterId);
+        log.info("New starter has been created, ID: {}", starterId);
     }
 }

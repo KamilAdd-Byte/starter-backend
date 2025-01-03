@@ -6,10 +6,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import pl.starter.basic.StarterCreatedDTO;
 import pl.starter.basic.StarterDTO;
 import pl.starter.sourdough.service.StarterService;
@@ -34,6 +31,12 @@ public class StarterController {
             @Parameter(description = "Details of the starter to be created")
             @RequestBody StarterDTO starterDTO) {
         StarterCreatedDTO newStarter = starterService.createNewStarter(starterDTO);
+        return ResponseEntity.ok(newStarter);
+    }
+
+    @GetMapping("/my")
+    public ResponseEntity<StarterDTO> createStarter() {
+        StarterDTO newStarter = starterService.getStarter();
         return ResponseEntity.ok(newStarter);
     }
 }

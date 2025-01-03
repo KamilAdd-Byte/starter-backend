@@ -1,5 +1,7 @@
 package pl.starter.sourdough.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -12,10 +14,14 @@ import pl.starter.feed.repository.FeedRepository;
 import pl.starter.flour.Flour;
 import pl.starter.flour.FlourRepository;
 import pl.starter.sourdough.domain.Starter;
+import pl.starter.sourdough.event.EventPublicationRepository;
 import pl.starter.sourdough.event.StarterCreatedEvent;
+import pl.starter.sourdough.event.model.EventPublication;
 import pl.starter.sourdough.repository.StarterRepository;
 import pl.starter.vessel.VesselRepository;
 import pl.starter.vessel.domain.Vessel;
+import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -26,6 +32,7 @@ public class StarterService {
     private final FlourRepository flourRepository;
     private final ModelMapper modelMapper;
     private final ApplicationEventPublisher eventPublisher;
+    private final EventPublicationRepository eventPublicationRepository;
 
     @Transactional
     public StarterCreatedDTO createNewStarter(StarterDTO starterDTO) {
@@ -43,8 +50,35 @@ public class StarterService {
         feedRepository.save(feed);
         vesselRepository.save(vessel);
         flourRepository.save(flour);
-        eventPublisher.publishEvent(new StarterCreatedEvent(this, savedStarter.getId()));
+
+        EventPublication eventPublication = new EventPublication();
+        eventPublication.setEventType("StarterCreated");
+        eventPublication.setEventPayload(String.format("Starter ID: %s", savedStarter.getId()));
+        eventPublication.setPublicationDate(LocalDateTime.now());
+        eventPublication.setListenerId("StarterEventListener");
+        eventPublication.setCompletionDate(LocalDateTime.now());
+
+        StarterCreatedEvent starterCreatedEvent = new StarterCreatedEvent(this, savedStarter.getId());
+
+        String serializedEvent = serializeEvent(starterCreatedEvent);
+        eventPublication.setSerializedEvent(serializedEvent);
+
+        eventPublicationRepository.save(eventPublication);
+        eventPublisher.publishEvent(starterCreatedEvent);
 
         return new StarterCreatedDTO(savedStarter.getId());
+    }
+    private String serializeEvent(StarterCreatedEvent event) {
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            return objectMapper.writeValueAsString(event);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException("Failed to serialize event", e);
+        }
+    }
+
+    public StarterDTO getStarter() {
+        List<Starter> all = starterRepository.findAll();
+        return modelMapper.map(all.getFirst(), StarterDTO.class);
     }
 }
