@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import pl.starter.basic.StarterActiveDTO;
 import pl.starter.basic.StarterCreatedDTO;
 import pl.starter.basic.StarterDTO;
 import pl.starter.sourdough.service.StarterService;
@@ -34,9 +35,9 @@ public class StarterController {
         return ResponseEntity.ok(newStarter);
     }
 
-    @GetMapping("/my")
-    public ResponseEntity<StarterDTO> createStarter() {
-        StarterDTO newStarter = starterService.getStarter();
-        return ResponseEntity.ok(newStarter);
+    @GetMapping("/active")
+    public ResponseEntity<StarterActiveDTO> getActiveStarter() {
+        StarterActiveDTO activeStarter = starterService.getActiveStarter();
+        return ResponseEntity.ok(activeStarter);
     }
 }

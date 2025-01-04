@@ -1,7 +1,6 @@
 package pl.starter.basic;
 
 import lombok.*;
-
 import java.time.LocalDateTime;
 
 @EqualsAndHashCode(callSuper = true)
@@ -9,8 +8,7 @@ import java.time.LocalDateTime;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class FeedDTO extends BasicDTO {
-    private long starterId;
+public class FirstFeedDTO extends BasicDTO {
     private double waterAmount;
     private double flourAmount;
     private double previousVolumeMl;

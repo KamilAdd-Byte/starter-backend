@@ -12,7 +12,7 @@ public class StarterDTO extends BasicDTO {
     @NonNull
     private FlourDTO flour;
     @NonNull
-    private FeedDTO feed;
+    private FirstFeedDTO firstFeed;
     @NonNull
     private VesselDTO vessel;
 }

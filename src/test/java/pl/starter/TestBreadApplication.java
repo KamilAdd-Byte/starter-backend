@@ -5,7 +5,7 @@ import org.springframework.boot.SpringApplication;
 public class TestBreadApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.from(BreadApplication::main).with(TestcontainersConfiguration.class).run(args);
+		SpringApplication.from(StarterApplication::main).with(TestcontainersConfiguration.class).run(args);
 	}
 
 }

@@ -1,19 +1,19 @@
 package pl.starter.sourdough.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
-import pl.starter.basic.StarterCreatedDTO;
-import pl.starter.basic.StarterDTO;
+import pl.starter.basic.*;
+import pl.starter.feed.controller.StarterFeedingDTO;
 import pl.starter.feed.domain.Feed;
 import pl.starter.feed.repository.FeedRepository;
 import pl.starter.flour.Flour;
 import pl.starter.flour.FlourRepository;
+import pl.starter.sourdough.domain.Condition;
 import pl.starter.sourdough.domain.Starter;
+import pl.starter.sourdough.domain.StarterCondition;
 import pl.starter.sourdough.event.EventPublicationRepository;
 import pl.starter.sourdough.event.StarterCreatedEvent;
 import pl.starter.sourdough.event.model.EventPublication;
@@ -22,6 +22,7 @@ import pl.starter.vessel.VesselRepository;
 import pl.starter.vessel.domain.Vessel;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.StringJoiner;
 
 @Service
 @RequiredArgsConstructor
@@ -38,7 +39,7 @@ public class StarterService {
     public StarterCreatedDTO createNewStarter(StarterDTO starterDTO) {
         Starter starter = modelMapper.map(starterDTO, Starter.class);
 
-        Feed feed = modelMapper.map(starterDTO.getFeed(), Feed.class);
+        Feed feed = modelMapper.map(starterDTO.getFirstFeed(), Feed.class);
         feed.setStarter(starter);
 
         Vessel vessel = modelMapper.map(starterDTO.getVessel(), Vessel.class);
@@ -51,12 +52,7 @@ public class StarterService {
         vesselRepository.save(vessel);
         flourRepository.save(flour);
 
-        EventPublication eventPublication = new EventPublication();
-        eventPublication.setEventType("StarterCreated");
-        eventPublication.setEventPayload(String.format("Starter ID: %s", savedStarter.getId()));
-        eventPublication.setPublicationDate(LocalDateTime.now());
-        eventPublication.setListenerId("StarterEventListener");
-        eventPublication.setCompletionDate(LocalDateTime.now());
+        EventPublication eventPublication = getEventPublication(savedStarter);
 
         StarterCreatedEvent starterCreatedEvent = new StarterCreatedEvent(this, savedStarter.getId());
 
@@ -65,20 +61,49 @@ public class StarterService {
 
         eventPublicationRepository.save(eventPublication);
         eventPublisher.publishEvent(starterCreatedEvent);
+        starter.setLastUpdated(LocalDateTime.now());
+
+        //todo separate to service
+        StarterCondition starterCondition = new StarterCondition();
+        starterCondition.setStarter(savedStarter);
+        starterCondition.setStatus(Condition.BREEDING);
 
         return new StarterCreatedDTO(savedStarter.getId());
     }
-    private String serializeEvent(StarterCreatedEvent event) {
-        try {
-            ObjectMapper objectMapper = new ObjectMapper();
-            return objectMapper.writeValueAsString(event);
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException("Failed to serialize event", e);
-        }
+
+    private EventPublication getEventPublication(Starter savedStarter) {
+        EventPublication eventPublication = new EventPublication();
+        eventPublication.setEventType("StarterCreated");
+        eventPublication.setEventPayload(String.format("Starter ID: %s", savedStarter.getId()));
+        eventPublication.setPublicationDate(LocalDateTime.now());
+        eventPublication.setListenerId("StarterEventListener");
+        eventPublication.setCompletionDate(LocalDateTime.now());
+        return eventPublication;
     }
 
-    public StarterDTO getStarter() {
+    private String serializeEvent(StarterCreatedEvent event) {
+        //todo finish!
+        return new StringJoiner(", ", "{", "}")
+                .add("\"eventId\": \"" + event.getStarterId() + "\"")
+                .add("\"timestamp\": \"" + LocalDateTime.now() + "\"")
+                .toString();
+    }
+
+    public StarterActiveDTO getActiveStarter() {
         List<Starter> all = starterRepository.findAll();
-        return modelMapper.map(all.getFirst(), StarterDTO.class);
+        return modelMapper.map(all.getFirst(), StarterActiveDTO.class);
+    }
+
+    public StarterFeedingDTO feedStarter(FeedDTO feedDTO) {
+        Starter starterToFeed = starterRepository.findById(feedDTO.getStarterId());
+        Feed newFeed = modelMapper.map(feedDTO, Feed.class);
+        newFeed.setStarter(starterToFeed);
+
+        starterToFeed.getFeedings().add(newFeed);
+        starterToFeed.setLastUpdated(LocalDateTime.now());
+
+        starterRepository.save(starterToFeed);
+        feedRepository.save(newFeed);
+        return new StarterFeedingDTO(newFeed.getId(), starterToFeed.getId());
     }
 }

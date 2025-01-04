@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import pl.starter.sourdough.domain.Starter;
-
 import java.time.LocalDateTime;
 
 @Entity
@@ -45,7 +44,6 @@ public class Vessel {
     private LocalDateTime startKeepStarter;
 
     @Column(name = "end_keep_starter")
-    @CreationTimestamp
     private LocalDateTime endKeepStarter ;
 
     @ManyToOne

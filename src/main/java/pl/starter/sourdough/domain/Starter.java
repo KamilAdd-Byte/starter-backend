@@ -29,6 +29,8 @@ public class Starter {
     private LocalDateTime createdAt;
 
     private int daysLife;
+    private double totalWeightStarters;
+    private double hoursLife;
 
     @Column(name = "last_updated")
     private LocalDateTime lastUpdated;
@@ -51,6 +53,7 @@ public class Starter {
     public void updateDaysLife() {
         if (createdAt != null) {
             this.daysLife = (int) ChronoUnit.DAYS.between(createdAt, LocalDateTime.now());
+            this.hoursLife = (double) ChronoUnit.HOURS.between(createdAt, LocalDateTime.now());
         }
         this.lastUpdated = LocalDateTime.now();
     }

@@ -3,24 +3,27 @@ package pl.starter.basic;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @EqualsAndHashCode(callSuper = true)
 @Builder
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
-public class VesselDTO extends BasicDTO {
+@AllArgsConstructor
+public class StarterActiveDTO extends BasicDTO {
     private String name;
-    private float volumeMl;
-    private Double heightCm;
-    private Double widthCm;
-    private Double depthCm;
-    private String material;
-    private String description;
+    @NonNull
+    private FlourDTO flour;
+    @NonNull
+    private List<FirstFeedDTO> feeds;
+    @NonNull
+    private List<VesselDTO> vessels;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm")
-    private LocalDateTime startKeepStarter;
-
+    private LocalDateTime createdAt;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm")
-    private LocalDateTime endKeepStarter;
+    private LocalDateTime lastUpdated;
+
+    private int daysLife;
+    private double hoursLife;
 }

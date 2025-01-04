@@ -7,7 +7,7 @@ import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import pl.starter.basic.FeedDTO;
+import pl.starter.basic.FirstFeedDTO;
 import pl.starter.basic.FlourDTO;
 import pl.starter.basic.StarterDTO;
 import pl.starter.basic.VesselDTO;
@@ -38,10 +38,10 @@ public class StarterMapper {
         modelMapper.typeMap(StarterDTO.class, Starter.class)
                 .addMapping(StarterDTO::getName, Starter::setName);
 
-        modelMapper.typeMap(FeedDTO.class, Feed.class)
-                .addMapping(FeedDTO::getWaterAmount, Feed::setWaterAmount)
-                .addMapping(FeedDTO::getFlourAmount, Feed::setFlourAmount)
-                .addMapping(FeedDTO::getFeedingAt, Feed::setFeedingAt);
+        modelMapper.typeMap(FirstFeedDTO.class, Feed.class)
+                .addMapping(FirstFeedDTO::getWaterAmount, Feed::setWaterAmount)
+                .addMapping(FirstFeedDTO::getFlourAmount, Feed::setFlourAmount)
+                .addMapping(FirstFeedDTO::getFeedingAt, Feed::setFeedingAt);
 
         modelMapper.typeMap(VesselDTO.class, Vessel.class)
                 .addMapping(VesselDTO::getName, Vessel::setName)
@@ -58,10 +58,10 @@ public class StarterMapper {
                 .addMapping(FlourDTO::getDescription, Flour::setDescription);
     }
 
-    public static Converter<FeedDTO, Feed> toFeed() {
+    public static Converter<FirstFeedDTO, Feed> toFeed() {
         return new AbstractConverter<>() {
             @Override
-            protected Feed convert(FeedDTO source) {
+            protected Feed convert(FirstFeedDTO source) {
                 return Feed.builder()
                         .waterAmount(source.getWaterAmount())
                         .flourAmount(source.getFlourAmount())
