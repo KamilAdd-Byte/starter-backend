@@ -9,4 +9,4 @@ echo "Building the Docker image..."
 docker build -t rye-starter .
 
 echo "Running the Docker container..."
-docker run -d -p 30308:30308 --name rye-starter rye-starter
+docker run -d -p 40075:40075 --name rye-starter rye-starter
