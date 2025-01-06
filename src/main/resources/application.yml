@@ -1,14 +1,13 @@
 server:
-  port: 9080
-
+  port: 30308
 spring:
   application:
     name: bread
   datasource:
-    username:
-    password:
-    driver-class-name:
-    url:
+    username: feed
+    password: feed
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/feeding
   jpa:
     hibernate:
       ddl-auto: update
@@ -18,3 +17,24 @@ spring:
       - classpath:db/migration
     clean-disabled: false
     baseline-on-migrate: true
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+springdoc:
+  api-docs:
+    enabled: true
+  swagger-ui:
+    enabled: true
+    path: /swagger-ui/index.html
+starter:
+  cors:
+    allowedOrigins:
+      - "*"
+    allowedMethods:
+      - "*"
+    allowedHeaders:
+      - "*"
+  life:
+    updater:
+      cron: "0 56 22 * * *"

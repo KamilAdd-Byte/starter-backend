@@ -35,3 +35,6 @@ starter:
       - "*"
     allowedHeaders:
       - "*"
+  life:
+    updater:
+      cron: "0 56 22 * * *"
